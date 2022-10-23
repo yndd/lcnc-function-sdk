@@ -1,0 +1,17 @@
+{
+  "apiVersion": "lcnc.yndd.io/v1alpha1",
+  "kind": "ResourceContext",
+  "metadata": {
+    "name": "example",
+    "namespace": "default"
+  },
+  "spec": {
+    "properties": {
+      "input": {
+        "admin.yndd.io/v1alpha1": "string blob"
+      }  
+    }
+  }
+}
+
+
