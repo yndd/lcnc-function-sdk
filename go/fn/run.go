@@ -27,6 +27,7 @@ func AsMain(input interface{}) error {
 		if err != nil {
 			return fmt.Errorf("unable to read from stdin: %v", err)
 		}
+		return fmt.Errorf("received bytes: %s", string(in))
 		out, err := Run(p, in)
 		// If there is an error, we don't return the error immediately.
 		// We write out to stdout before returning any error.
