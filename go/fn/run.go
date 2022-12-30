@@ -52,7 +52,7 @@ func Run(p ResourceContextProcessor, in []byte) ([]byte, error) {
 		return nil, err
 	}
 	// calls the external program which implements the Run interface
-	// based on how AsMain is defined it either calls 
+	// based on how AsMain is defined it either calls
 	// - the raw processor implementation (processor.go)
 	// - the more abstracted sdk through the fn runner (runner_processor.go)
 	success, fnErr := p.Process(rCtx)

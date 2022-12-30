@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/yndd/lcnc-function-sdk/go/fn"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 func main() {
@@ -27,12 +28,16 @@ func (t *Topology) Process(fnCtx *fn.ResourceContext) {
 	// WITH THIS SDK USAGE YOU NEED TO TAKE CARE OF ALL THE PRECAUTIONS
 	// INIT OUTPUT/CONDITIONS/RESULT
 	if fnCtx.Resources.Conditions == nil {
-		fnCtx.Resources.Conditions = make(map[string][]string)
+		fnCtx.Resources.Conditions = make(map[string][]runtime.RawExtension)
+	}
+	if fnCtx.Resources.Output == nil {
+		fnCtx.Resources.Output = make(map[string][]runtime.RawExtension)
 	}
 	if _, ok := fnCtx.Resources.Output["topology.topo.yndd.io"]; !ok {
-		fnCtx.Resources.Output["topology.topo.yndd.io"] = make([]string, 0)
+		fnCtx.Resources.Output["topology.topo.yndd.io"] = make([]runtime.RawExtension, 0)
 	}
-	fnCtx.Resources.Output["topology.topo.yndd.io"] = append(
-		fnCtx.Resources.Output["topology.topo.yndd.io"], "dummy topo spec",
-	)
+	fnCtx.Resources.Output["topo.yndd.io.v1alpha1.Topology"] = append(
+		fnCtx.Resources.Output["topo.yndd.io.v1alpha1.Topology"], runtime.RawExtension{Raw: []byte("{\"a\": \"b\"}")})
+	fnCtx.Resources.Output["topo.yndd.io.v1alpha1.Topology"] = append(
+		fnCtx.Resources.Output["topo.yndd.io.v1alpha1.Topology"], runtime.RawExtension{Raw: []byte("{\"a\": \"b\"}")})
 }

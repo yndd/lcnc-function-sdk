@@ -3,6 +3,8 @@ package fn
 import (
 	"encoding/json"
 	"fmt"
+
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 // ResourceContextProcessor is implemented by configuration functions built with this framework
@@ -19,14 +21,12 @@ func (p ResourceContextProcessorFunc) Process(fnCtx *ResourceContext) (bool, err
 
 type ResourceContext struct {
 	// fnconfig provides additional configuration for the function
-	FunctionConfig map[string]string `json:"functionConfig,omitempty" yaml:"functionConfig,omitempty"`
+	FunctionConfig map[string]runtime.RawExtension `json:"functionConfig,omitempty" yaml:"functionConfig,omitempty"`
 	// Resources contain the resource on which this function operates
 	Resources *Resources `json:"resources,omitempty" yaml:"resources,omitempty"`
 	// results provide a structured
 	Results *Results `json:"results,omitempty" yaml:"results,omitempty"`
 }
-
-
 
 func ParseResourceContext(input []byte) (*ResourceContext, error) {
 	rCtx := &ResourceContext{}
@@ -35,4 +35,3 @@ func ParseResourceContext(input []byte) (*ResourceContext, error) {
 	}
 	return rCtx, nil
 }
-

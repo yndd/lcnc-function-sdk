@@ -2,6 +2,8 @@ package fn
 
 import (
 	"context"
+
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 func WithContext(ctx context.Context, runner Runner) ResourceContextProcessor {
@@ -30,8 +32,8 @@ func (r runnerProcessor) Process(rCtx *ResourceContext) (bool, error) {
 	// initialize the result
 	results := &Results{}
 	// initialize the conditions and output
-	rCtx.Resources.Output = map[string][]string{}
-	rCtx.Resources.Conditions = map[string][]string{}
+	rCtx.Resources.Output = map[string][]runtime.RawExtension{}
+	rCtx.Resources.Conditions = map[string][]runtime.RawExtension{}
 
 	shouldPass := r.fnRunner.Run(fnCtx, rCtx.FunctionConfig, rCtx.Resources, results)
 	// copy the results in the resourceContext

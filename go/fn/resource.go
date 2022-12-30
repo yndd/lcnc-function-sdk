@@ -13,11 +13,11 @@ import (
 
 type Resources struct {
 	// holds the input KRM resources with the key being GVK in string format
-	Input map[string][]string `json:"input,omitempty" yaml:"input,omitempty"`
+	Input map[string][]runtime.RawExtension `json:"input,omitempty" yaml:"input,omitempty"`
 	// holds the output KRM resources with the key being GVK in string format
-	Output map[string][]string `json:"output,omitempty" yaml:"output,omitempty"`
+	Output map[string][]runtime.RawExtension `json:"output,omitempty" yaml:"output,omitempty"`
 	// holds the conditional KRM resources with the key being GVK in string format
-	Conditions map[string][]string `json:"conditions,omitempty" yaml:"conditions,omitempty"`
+	Conditions map[string][]runtime.RawExtension `json:"conditions,omitempty" yaml:"conditions,omitempty"`
 }
 
 // An Object is a Kubernetes object.
@@ -30,13 +30,13 @@ func (r *Resources) AddOutput(o Object) error {
 	gvkString := GetGVKString(o)
 	_, ok := r.Output[gvkString]
 	if !ok {
-		r.Output[gvkString] = []string{}
+		r.Output[gvkString] = []runtime.RawExtension{}
 	}
 	b, err := json.Marshal(o)
 	if err != nil {
 		return err
 	}
-	r.Output[gvkString] = append(r.Output[gvkString], string(b))
+	r.Output[gvkString] = append(r.Output[gvkString], runtime.RawExtension{Raw:b})
 	return nil
 }
 
@@ -44,13 +44,13 @@ func (r *Resources) AddCondition(o Object) error {
 	gvkString := GetGVKString(o)
 	_, ok := r.Conditions[gvkString]
 	if !ok {
-		r.Conditions[gvkString] = []string{}
+		r.Conditions[gvkString] = []runtime.RawExtension{}
 	}
 	b, err := json.Marshal(o)
 	if err != nil {
 		return err
 	}
-	r.Conditions[gvkString] = append(r.Conditions[gvkString], string(b))
+	r.Conditions[gvkString] = append(r.Conditions[gvkString], runtime.RawExtension{Raw:b})
 	return nil
 }
 
