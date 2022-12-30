@@ -26,14 +26,7 @@ type ResourceContext struct {
 	Results *Results `json:"results,omitempty" yaml:"results,omitempty"`
 }
 
-type Resources struct {
-	// holds the input KRM resources with the key being GVK in string format
-	Input map[string][]string `json:"input,omitempty" yaml:"input,omitempty"`
-	// holds the output KRM resources with the key being GVK in string format
-	Output map[string][]string `json:"output,omitempty" yaml:"output,omitempty"`
-	// holds the conditional KRM resources with the key being GVK in string format
-	Conditions map[string][]string `json:"conditions,omitempty" yaml:"conditions,omitempty"`
-}
+
 
 func ParseResourceContext(input []byte) (*ResourceContext, error) {
 	rCtx := &ResourceContext{}
