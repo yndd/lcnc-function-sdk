@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"strings"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
@@ -18,13 +20,14 @@ type Resources struct {
 	Conditions map[string][]string `json:"conditions,omitempty" yaml:"conditions,omitempty"`
 }
 
-func (r *Resources) AddOutput(o *unstructured.Unstructured) error {
-	apiversionSplit := strings.Split(o.GetAPIVersion(), "/")
-	gvkString := GVKToString(&schema.GroupVersionKind{
-		Group:   apiversionSplit[0],
-		Version: apiversionSplit[1],
-		Kind:    o.GetKind(),
-	})
+// An Object is a Kubernetes object.
+type Object interface {
+	metav1.Object
+	runtime.Object
+}
+
+func (r *Resources) AddOutput(o Object) error {
+	gvkString := GetGVKString(o)
 	_, ok := r.Output[gvkString]
 	if !ok {
 		r.Output[gvkString] = []string{}
@@ -37,7 +40,7 @@ func (r *Resources) AddOutput(o *unstructured.Unstructured) error {
 	return nil
 }
 
-func (r *Resources) AddCondition(o *unstructured.Unstructured) error {
+func (r *Resources) AddCondition(o Object) error {
 	gvkString := GetGVKString(o)
 	_, ok := r.Conditions[gvkString]
 	if !ok {
@@ -51,12 +54,13 @@ func (r *Resources) AddCondition(o *unstructured.Unstructured) error {
 	return nil
 }
 
-func GetGVKString(o *unstructured.Unstructured) string {
-	apiversionSplit := strings.Split(o.GetAPIVersion(), "/")
+func GetGVKString(o Object) string {
+	u := o.(*unstructured.Unstructured)
+	apiversionSplit := strings.Split(u.GetAPIVersion(), "/")
 	return GVKToString(&schema.GroupVersionKind{
 		Group:   apiversionSplit[0],
 		Version: apiversionSplit[1],
-		Kind:    o.GetKind(),
+		Kind:    u.GetKind(),
 	})
 }
 
