@@ -57,7 +57,7 @@ func Run(p ResourceContextProcessor, in []byte) ([]byte, error) {
 	// - the more abstracted sdk through the fn runner (runner_processor.go)
 	success, fnErr := p.Process(rCtx)
 	// marshal the renewed rctx to return as stdout
-	out, jsonErr := json.Marshal(rCtx)
+	out, jsonErr := json.MarshalIndent(rCtx, "", "  ")
 	if jsonErr != nil {
 		return out, jsonErr
 	}

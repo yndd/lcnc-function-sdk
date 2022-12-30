@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
@@ -36,7 +35,7 @@ func (r *Resources) AddOutput(o Object) error {
 	if err != nil {
 		return err
 	}
-	r.Output[gvkString] = append(r.Output[gvkString], runtime.RawExtension{Raw:b})
+	r.Output[gvkString] = append(r.Output[gvkString], runtime.RawExtension{Raw: b})
 	return nil
 }
 
@@ -50,18 +49,13 @@ func (r *Resources) AddCondition(o Object) error {
 	if err != nil {
 		return err
 	}
-	r.Conditions[gvkString] = append(r.Conditions[gvkString], runtime.RawExtension{Raw:b})
+	r.Conditions[gvkString] = append(r.Conditions[gvkString], runtime.RawExtension{Raw: b})
 	return nil
 }
 
 func GetGVKString(o Object) string {
-	u := o.(*unstructured.Unstructured)
-	apiversionSplit := strings.Split(u.GetAPIVersion(), "/")
-	return GVKToString(&schema.GroupVersionKind{
-		Group:   apiversionSplit[0],
-		Version: apiversionSplit[1],
-		Kind:    u.GetKind(),
-	})
+	gvk := o.GetObjectKind().GroupVersionKind()
+	return GVKToString(&gvk)
 }
 
 func GVKToString(gvk *schema.GroupVersionKind) string {
