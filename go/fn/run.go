@@ -47,14 +47,17 @@ func AsMain(input interface{}) error {
 // updated resourceContext will be returned.
 func Run(p ResourceContextProcessor, in []byte) ([]byte, error) {
 	// parse input as a resource context
-	rctx, err := ParseResourceContext(in)
+	rCtx, err := ParseResourceContext(in)
 	if err != nil {
 		return nil, err
 	}
 	// calls the external program which implements the Run interface
-	success, fnErr := p.Process(rctx)
+	// based on how AsMain is defined it either calls 
+	// - the raw processor implementation (processor.go)
+	// - the more abstracted sdk through the fn runner (runner_processor.go)
+	success, fnErr := p.Process(rCtx)
 	// marshal the renewed rctx to return as stdout
-	out, jsonErr := json.Marshal(rctx)
+	out, jsonErr := json.Marshal(rCtx)
 	if jsonErr != nil {
 		return out, jsonErr
 	}
@@ -66,29 +69,3 @@ func Run(p ResourceContextProcessor, in []byte) ([]byte, error) {
 	}
 	return out, nil
 }
-
-/*
-func Execute(p ResourceContextProcessor, r io.Reader, w io.Writer) error {
-	rw := &ByteReadWriter{
-		Reader: r,
-		Writer: w,
-	}
-	return execute(p, rw)
-}
-
-func execute(p ResourceContextProcessor, rw *ByteReadWriter) error {
-	// Read the input
-	rl, err := rw.Read()
-	if err != nil {
-		return fmt.Errorf("")
-	}
-	success, fnErr := p.Process(rl)
-	if fnErr != nil {
-		return fnErr
-	}
-	if !success {
-		return fmt.Errorf("error: function failure")
-	}
-	return nil
-}
-*/

@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-
-	rctxv1 "github.com/yndd/lcnc-runtime/pkg/api/resourcecontext/v1"
 )
 
 type ByteReadWriter struct {
@@ -16,13 +14,13 @@ type ByteReadWriter struct {
 	Writer io.Writer
 }
 
-func (rw *ByteReadWriter) Read() (*rctxv1.ResourceContext, error) {
+func (rw *ByteReadWriter) Read() (*ResourceContext, error) {
 	input := &bytes.Buffer{}
 	_, err := io.Copy(input, rw.Reader)
 	if err != nil {
 		return nil, err
 	}
-	rc := &rctxv1.ResourceContext{}
+	rc := &ResourceContext{}
 	if err := json.Unmarshal(input.Bytes(), rc); err != nil {
 		return nil, err
 	}
