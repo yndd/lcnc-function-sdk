@@ -5,6 +5,18 @@ import (
 	"fmt"
 )
 
+// ResourceContextProcessor is implemented by configuration functions built with this framework
+type ResourceContextProcessor interface {
+	Process(fnCtx *ResourceContext) (bool, error)
+}
+
+// ResourceContextProcessorFunc converts a compatible function to a ResourceContextProcessor.
+type ResourceContextProcessorFunc func(fnCtx *ResourceContext) (bool, error)
+
+func (p ResourceContextProcessorFunc) Process(fnCtx *ResourceContext) (bool, error) {
+	return p(fnCtx)
+}
+
 type ResourceContext struct {
 	// fnconfig provides additional configuration for the function
 	FunctionConfig map[string]string `json:"functionConfig,omitempty" yaml:"functionConfig,omitempty"`
@@ -30,3 +42,4 @@ func ParseResourceContext(input []byte) (*ResourceContext, error) {
 	}
 	return rCtx, nil
 }
+
